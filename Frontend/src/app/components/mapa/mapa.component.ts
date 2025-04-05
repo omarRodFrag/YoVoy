@@ -42,7 +42,6 @@ export class MapaComponent implements OnInit, OnDestroy {
     this.map = L.map('map').setView([21.88, -102.30], 13);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap contributors'
     }).addTo(this.map);
   }
 
@@ -59,7 +58,8 @@ export class MapaComponent implements OnInit, OnDestroy {
     const opciones = {
       style: {
         color: 'blue',
-        weight: 4
+        weight: 5,
+        lineCap: 'round'
       }
     };
 
