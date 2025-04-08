@@ -1,80 +1,120 @@
-/* Reseteamos márgenes y padding */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Arial', sans-serif;
+  font-family: 'Segoe UI', sans-serif;
 }
 
-/* Fondo */
 body {
-  background: #f8f9fa;
-  font-family: 'Arial', sans-serif;
+  background: #f4f6f8;
   color: #333;
 }
-
-/* Contenedor principal */
-.container {
-  display: flex;
-  gap: 20px;
-  padding: 20px;
-  flex-wrap: wrap;
+.mapa-background {
+  min-height: 100vh;
+  background-image: url('/assets/images/fondo-yovoy.png');
+  background-repeat: repeat;
+  background-size: 300px 300px;
+  background-position: center;
+  background-color: #f4f6f8;
 }
 
-/* Botones de rutas */
+
+
+/* HEADER */
+.header {
+  background-color: #003366;
+  color: white;
+  padding: 15px 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.logo {
+  font-size: 28px;
+}
+
+.menu-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 28px;
+  cursor: pointer;
+}
+
+/* CONTENEDOR PRINCIPAL CENTRADO */
+.main-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* BOTONES DE RUTA */
 .ruta-buttons {
   display: flex;
-  gap: 15px;
-  flex-wrap: wrap;
   justify-content: center;
-  margin-bottom: 10px;
-  margin-top: 10px;
+  gap: 15px;
+  margin: 20px 0;
+  flex-wrap: wrap;
 }
 
 .route-btn {
-  background-color: #004a8d;
+  background-color: #005b96;
   color: white;
   border: none;
-  padding: 15px 25px;
-  border-radius: 10px;
+  padding: 12px 25px;
+  border-radius: 999px;
   cursor: pointer;
-  font-size: 18px;
+  font-size: 16px;
   transition: all 0.3s ease-in-out;
-  width: 200px;
+  box-shadow: 0 4px 12px rgba(0, 91, 150, 0.2);
 }
 
 .route-btn:hover {
-  background-color: #003366;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+  background-color: #004070;
+  transform: scale(1.05);
 }
 
-.route-btn:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.5);
+/* CONTENEDOR FLEX MAPA + SIDEBAR */
+.container {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  align-items: flex-start;
 }
 
-/* Contenedor del mapa */
+/* MAPA */
 .map-container {
   flex: 2;
   height: 70vh;
-  border-radius: 10px;
+  border-radius: 15px;
   overflow: hidden;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  background: white;
 }
 
-/* Barra lateral */
+/* SIDEBAR */
 .sidebar {
   flex: 1;
-  background-color: #ffffff;
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  max-height: 80vh;
-  overflow-y: auto;
+  background: white;
+  border-radius: 15px;
+  padding: 25px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
 }
 
-/* Lista de rutas */
+.sidebar h2 {
+  font-size: 22px;
+  margin-bottom: 20px;
+  color: #003366;
+}
+
 .route-list {
   display: flex;
   flex-direction: column;
@@ -84,114 +124,92 @@ body {
 .route-item {
   background-color: #f1f3f5;
   padding: 20px;
-  border-radius: 8px;
+  border-radius: 12px;
   cursor: pointer;
   transition: all 0.3s ease;
+  border-left: 6px solid #005b96;
 }
 
 .route-item:hover {
-  background-color: #e2e6ea;
+  background-color: #e6ecf1;
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .route-item h3 {
   font-size: 18px;
-  font-weight: bold;
+  margin-bottom: 5px;
 }
 
 .route-item p {
   font-size: 14px;
-  color: #6c757d;
+  color: #666;
 }
 
-/* Menú hamburguesa */
-.menu-btn {
-  background: none;
-  border: none;
-  color: white;
-  font-size: 30px;
-  cursor: pointer;
-  position: absolute;
-  left: 20px;
-}
-
+/* MENÚ LATERAL */
 .side-menu {
   position: fixed;
   top: 0;
-  left: -250px; /* Esconde el menú fuera de la vista */
-  width: 250px;
-  height: auto;
-  background-color: #005b96; /* Color de fondo del menú */
+  left: -260px;
+  width: 260px;
+  height: 100%;
+  background-color: #003366;
   color: white;
-  padding: 20px;
-  border-radius: 15px 0 0 15px; /* Redondeo de las esquinas */
-  transition: all 0.3s ease-in-out;
-  box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1); /* Sombra */
-  opacity: 0; /* Menú oculto por defecto */
+  padding: 30px 20px;
+  transition: left 0.3s ease;
+  z-index: 1000;
 }
 
-/* Cuando el menú se activa (se abre) */
 .side-menu.active {
-  left: 0; /* Muestra el menú */
-  opacity: 1; /* Añade efecto de desvanecimiento */
+  left: 0;
 }
 
 .side-menu ul {
   list-style: none;
   padding: 0;
+  margin-top: 30px;
 }
 
 .side-menu li {
-  padding: 10px;
+  padding: 15px;
   font-size: 18px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  border-radius: 8px;
+  transition: background 0.2s ease;
 }
 
 .side-menu li:hover {
-  background-color: #003366; /* Color de fondo cuando se pasa el ratón */
-  transform: translateY(-2px); /* Efecto de subida */
+  background-color: #005b96;
 }
-
 
 .side-menu button {
-  background-color: transparent;
-  color: white;
+  background: none;
   border: none;
-  font-size: 30px;
-  cursor: pointer;
-}
-
-/* Header */
-.header {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #005b96;
   color: white;
-  padding: 20px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  border-radius: 8px 8px 0 0;
+  font-size: 28px;
+  cursor: pointer;
+  position: absolute;
+  top: 20px;
+  right: 20px;
 }
 
-/* Responsividad */
+/* RESPONSIVE */
 @media (max-width: 768px) {
   .container {
-      flex-direction: column;
-  }
-
-  .ruta-buttons {
-      flex-direction: column;
-      gap: 10px;
+    flex-direction: column;
   }
 
   .map-container {
-      height: 50vh;
+    height: 50vh;
+    width: 100%;
   }
 
   .sidebar {
-      width: 100%;
-      margin-top: 20px;
+    width: 100%;
+    margin-top: 20px;
+  }
+
+  .ruta-buttons {
+    flex-direction: column;
+    align-items: center;
   }
 }

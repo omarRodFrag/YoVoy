@@ -161,57 +161,64 @@ def create_parada():
         HelperFunctions.PrintException()
         return jsonify({'error': 'Error interno del servidor.'}), 500
 
+# ==========================
+#  LOGIN
+# ==========================
+@app.route('/login', methods=['POST'])
+def login():
+    try:
+        data = request.json
+        email = data.get('email')
+        password = data.get('password')
+
+        if not email or not password:
+            return jsonify({'error': 'Email y contraseña son requeridos'}), 400
+
+        user = callMethod.login_user(email, password)
+        if user:
+            return jsonify({"message": "Login exitoso", "user": user}), 200
+        return jsonify({'error': 'Credenciales inválidas'}), 401
+    except Exception as e:
+        HelperFunctions.PrintException()
+        print(str(e))
+        return jsonify({'error': 'Error interno del servidor'}), 500
 
 
 
 
+# ==========================
+#  REGISTRO
+# ==========================
+@app.route('/registro', methods=['POST'])
+def register():
+    try:
+        data = request.json
+        print(data)
+        nombre = data.get('nombre')
+        apellidos = data.get('apellidos')
+        email = data.get('email')
+        password = data.get('password')
+        rol = data.get('rol', 'user')
 
+        if not nombre or not apellidos or not email or not password:
+            return jsonify({'error': 'Faltan campos requeridos'}), 400
 
+        result = callMethod.add_user(nombre, apellidos, email, password, rol)
+
+        # Si es un dict, entonces contiene un error
+        if isinstance(result, dict) and 'error' in result:
+            return jsonify({'error': result['error']}), 400
+
+        # Si todo salió bien, result es el id (int)
+        return jsonify({"message": "Usuario registrado", "id": result}), 201
+
+    except Exception as e:
+        HelperFunctions.PrintException()
+        print(str(e))
+        return jsonify({'error': 'Error interno del servidor'}), 500
 
 
 
 # Ejecutar la API
 if __name__ == '__main__':
     app.run(debug=True)
-
-
-
-# API para el registro de usuarios
-@app.route('/api/registro', methods=['POST'])
-def registro():
-    try:
-        data = request.get_json()
-        strFirstName = data.get('strFirstName')
-        strLastName = data.get('strLastName')
-        strEmail = data.get('strEmail')
-        strPassword = data.get('strPassword')
-        strPhone = data.get('strPhone')
-        strAddress = data.get('strAddress')
-        strPostalCode = data.get('strPostalCode')
-        strTitularNombre = data.get('strTitularNombre')
-        strCardNumber = data.get('strCardNumber')
-        strExpirationDate = data.get('strExpirationDate')
-        strSecurityCode = data.get('strSecurityCode')
-
-        # Llama a la función en Functions.py para insertar el usuario
-        documento_actualizado = callMethod.insert_usuario_log({
-            "strFirstName": strFirstName,
-            "strLastName": strLastName,
-            "strEmail": strEmail,
-            "strPassword": strPassword,
-            "strPhone": strPhone,
-            "strAddress": strAddress,
-            "strPostalCode": strPostalCode,
-            "strTitularNombre": strTitularNombre,
-            "strCardNumber": strCardNumber,
-            "strExpirationDate": strExpirationDate,
-            "strSecurityCode": strSecurityCode,
-            "role":"admin"
-        })
-
-        return jsonify(documento_actualizado), 201  # Retorna el resultado en formato JSON y el código de estado 201
-
-    except Exception as e:
-        HelperFunctions.PrintException()
-        print(str(e))
-        return jsonify({'error': 'Error interno del servidor.'}), 500  # Mensaje de error más claro

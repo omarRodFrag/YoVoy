@@ -37,4 +37,16 @@ export class ServiceService {
     return this.http.post(`${this.baseUrl}/unidades`, data);
   }
 
+
+  // Crear un nuevo usuario
+  registrarUsuario(data: any): Observable<any> {
+    console.log(data)
+    return this.http.post(`${this.baseUrl}/registro`, data);
+  }
+
+  // Verificar si el usuario existe
+  login(data: any): Observable<any> {
+    return this.http.post(`${this.baseUrl}/login`, data);
+  }
+
 }

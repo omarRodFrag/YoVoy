@@ -10,6 +10,7 @@ import { LoginComponent } from './components/login/login.component';
 import { RegistroComponent } from './components/registro/registro.component';
 import { UnidadesComponent } from './components/unidades/unidades.component';
 import { PersonalComponent } from './components/personal/personal.component'; // Asegúrate de importar el componente
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,9 @@ import { PersonalComponent } from './components/personal/personal.component'; //
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    MapaComponent // Aquí lo importamos para que pueda ser utilizado
+    MapaComponent,
+    FormsModule,
+    ReactiveFormsModule 
   ],
   providers: [],
   bootstrap: [AppComponent]
