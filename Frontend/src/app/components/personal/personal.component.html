@@ -1,1 +1,31 @@
-<p>personal works!</p>
+<div class="personal-container">
+  <h1>Personal en Tiempo Real</h1>
+
+  <div class="filtros">
+    <button [class.active]="filtroActivo === 'Todos'" (click)="cambiarFiltro('Todos')">Todos</button>
+    <button [class.active]="filtroActivo === 'Disponibles'" (click)="cambiarFiltro('Disponibles')">Disponibles</button>
+    <button [class.active]="filtroActivo === 'En Ruta'" (click)="cambiarFiltro('En Ruta')">En Ruta</button>
+    <button [class.active]="filtroActivo === 'En Descanso'" (click)="cambiarFiltro('En Descanso')">En Descanso</button>
+  </div>
+
+  <div class="lista-personal">
+    <div class="personal-header">
+      <span>Nombre</span>
+      <span>Puesto</span>
+      <span>Ruta Asignada</span>
+      <span>Horario</span>
+      <span>Estado</span>
+    </div>
+
+    <!-- Cambia 'empleados' por 'empleadosFiltrados' -->
+    <div class="personal-item" *ngFor="let empleado of empleadosFiltrados">
+      <span>{{empleado.nombre}}</span>
+      <span>{{empleado.puesto}}</span>
+      <span>{{empleado.rutaAsignada}}</span>
+      <span>{{empleado.horario}}</span>
+      <span class="estado" [class]="'estado-' + empleado.estado.toLowerCase().replace(' ', '-')">
+        {{empleado.estado}}
+      </span>
+    </div>
+  </div>
+</div>
