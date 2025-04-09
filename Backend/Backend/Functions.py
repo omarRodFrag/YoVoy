@@ -1,5 +1,8 @@
 from Backend.GlobalInfo.keys import get_db_connection
 import bcrypt
+from flask_mail import Message, Mail
+import random
+mail = Mail()
 
 # Obtener todos los usuarios
 def get_all_users():
@@ -118,9 +121,20 @@ def add_parada(nombre, latitud, longitud):
 def login_user(email, password):
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
-    sql = "SELECT * FROM usuarios WHERE email = %s"
+    sql = "SELECT * FROM usuarios WHERE email = %s" 
     cursor.execute(sql, (email,))
     user = cursor.fetchone()
+
+    # Generar un código de verificación aleatorio
+    verification_code = random.randint(100000, 999999)
+
+    # Almacenar el código de verificación en la base de datos
+    cursor.execute("UPDATE usuarios SET verification_code = %s WHERE email = %s", (verification_code, email))
+    conn.commit()
+
+    # Enviar el código por correo
+    email_sent = send_verification_email(email, verification_code)
+
     conn.close()
 
     if user and bcrypt.checkpw(password.encode('utf-8'), user['password'].encode('utf-8')):
@@ -155,3 +169,43 @@ def add_user(name, apellidos, email, password, role):
     user_id = cursor.lastrowid  # Obtenemos el ID del usuario creado
     conn.close()
     return user_id
+
+
+# Función para enviar el correo de verificación
+def send_verification_email(email, code):
+    try:
+        msg = Message('Código de Verificación', recipients=[email])
+        msg.body = f'Tu código de verificación es: {code}'
+        mail.send(msg)
+        return True
+    except Exception as e:
+        print(f"Error al enviar correo: {e}")
+        return False
+
+
+# Función para verificar el código de verificación de un usuario
+def verificar_codigo(email, entered_code):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        # Buscar el código de verificación en la base de datos MySQL
+        cursor.execute("SELECT verification_code FROM usuarios WHERE email = %s", (email,))
+        user = cursor.fetchone()
+
+        conn.close()
+
+        if user:
+            stored_code = user.get('verification_code')
+            
+            # Compara el código ingresado con el almacenado
+            if str(entered_code) == str(stored_code):
+                return {'message': 'Código verificado correctamente'}, 200
+            else:
+                return {'message': 'Código incorrecto'}, 400
+        else:
+            return {'message': 'Usuario no encontrado'}, 404
+
+    except Exception as e:
+        print(str(e))
+        return {'message': 'Error al verificar el código'}, 500

@@ -49,4 +49,9 @@ export class ServiceService {
     return this.http.post(`${this.baseUrl}/login`, data);
   }
 
+  // Método para verificar el código de verificación (petición POST)
+  verifyCode(body: { email: string, code: string }): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/verify`, body);
+  }
+
 }

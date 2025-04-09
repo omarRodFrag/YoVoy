@@ -2,9 +2,22 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 import Backend.Functions as callMethod
 import Backend.GlobalInfo.Helpers as HelperFunctions
+from flask_mail import Mail, Message
+
 
 app = Flask(__name__)
 CORS(app)
+
+
+# Configuración de Flask-Mail
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = 'omar.rod.fraf@gmail.com'
+app.config['MAIL_PASSWORD'] = 'svxf owxq meja eavy'
+app.config['MAIL_DEFAULT_SENDER'] = 'omar.rod.fraf@gmail.com'
+mail = Mail(app)
+
 
 # Ruta para obtener todos los usuarios
 @app.route('/users', methods=['GET'])
@@ -133,33 +146,6 @@ def create_ruta():
         HelperFunctions.PrintException()
         return jsonify({'error': 'Error interno del servidor.'}), 500
 
-# ==========================
-#  PARADAS
-# ==========================
-
-@app.route('/paradas', methods=['GET'])
-def get_paradas():
-    try:
-        paradas = callMethod.get_all_paradas()
-        return jsonify(paradas), 200
-    except Exception as e:
-        HelperFunctions.PrintException()
-        return jsonify({'error': 'Error interno del servidor.'}), 500
-
-@app.route('/paradas', methods=['POST'])
-def create_parada():
-    try:
-        data = request.json
-        nombre = data.get('nombre')
-        latitud = data.get('latitud')
-        longitud = data.get('longitud')
-        parada_id = callMethod.add_parada(
-            nombre, latitud, longitud
-        )
-        return jsonify({"message": "Parada creada", "id": parada_id}), 201
-    except Exception as e:
-        HelperFunctions.PrintException()
-        return jsonify({'error': 'Error interno del servidor.'}), 500
 
 # ==========================
 #  LOGIN
@@ -183,6 +169,22 @@ def login():
         print(str(e))
         return jsonify({'error': 'Error interno del servidor'}), 500
 
+@app.route('/verify', methods=['POST'])
+def verify_code():
+    try:
+        data = request.get_json()
+        print(data)
+        email = data.get('email')
+        entered_code = data.get('code')
+
+        # Llamar a la función de verificación de código desde Functions.py
+        response, status_code = callMethod.verificar_codigo(email, entered_code)
+
+        return jsonify(response), status_code
+
+    except Exception as e:
+        print(str(e))
+        return jsonify({'message': 'Error al verificar el código'}), 500
 
 
 

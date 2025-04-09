@@ -19,9 +19,11 @@ import { Login } from './interface/login.interface';
 })
 export class LoginComponent {
   user: any = null;
+  showVerificationForm: boolean = false;  // Controla si se debe mostrar el formulario de verificación
 
   username: string = '';
   availabilityMessage: string = '';
+  verificationCode: string = '';  // Código de verificación ingresado por el usuario
 
   constructor(
     private router: Router,
@@ -38,7 +40,7 @@ export class LoginComponent {
   }
 
   // Método que maneja el registro de usuario
-  register() {
+  login() {
     if (this.loginForm.invalid) {
       Swal.fire({
         icon: 'error',
@@ -61,12 +63,11 @@ export class LoginComponent {
         if (response.message) {
           Swal.fire({
             icon: 'success',
-            title: 'El usuario se registro correctamente',
+            title: 'Enviando correo de verificación',
             showConfirmButton: false,
             timer: 2000,
           });
-          // Redirige al login después del registro exitoso
-          this.router.navigate(['/mapa']);
+          this.showVerificationForm = true;
         } else if (response.error) {
           Swal.fire({
             icon: 'error',
@@ -91,6 +92,33 @@ export class LoginComponent {
           timer: 2000,
         });
         return;
+      }
+    );
+  }
+
+  // Método para verificar el código de verificación
+  verifyCode(verificationCode:string) {
+    const body = { email: this.loginForm.value.email, code: verificationCode };
+
+    this.service.verifyCode(body).subscribe(
+      (response) => {
+        if (response.message === 'Código verificado correctamente') {
+          // Código de verificación exitoso, redirigimos a la página principal
+          Swal.fire({
+            icon: 'success',
+            title: 'Código verificado correctamente',
+            showConfirmButton: false,
+            timer: 2000,
+          });
+          this.router.navigate(['/mapa']);
+        } else {
+          // Código incorrecto, mostramos un mensaje de error
+          alert('Código incorrecto');
+        }
+      }, 
+      (error) => {
+        console.error('Error al verificar el código:', error);
+        alert('Hubo un problema al verificar el código');
       }
     );
   }
