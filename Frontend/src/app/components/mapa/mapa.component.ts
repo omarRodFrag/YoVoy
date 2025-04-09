@@ -3,6 +3,7 @@ import * as L from 'leaflet';
 import { ruta20, ruta40, ruta50 } from '../../data/rutas';
 import { ServiceService } from '../../service.service';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-mapa',
@@ -13,6 +14,7 @@ import { CommonModule } from '@angular/common';
 })
 export class MapaComponent implements OnInit, OnDestroy {
   rutas: any[] = [];
+  menuOpen = false;  // Para abrir o cerrar el menú
 
   private map!: L.Map;
   private marker!: L.Marker;
@@ -24,7 +26,7 @@ export class MapaComponent implements OnInit, OnDestroy {
   private speedFactor: number = 0.05; // Factor para controlar la velocidad (en km/s)
   private currentRoute: string = 'ruta20'; // Ruta activa por defecto (puede cambiar a 'ruta40' o 'ruta50')
 
-  constructor(private apiService: ServiceService) { }
+  constructor(private apiService: ServiceService, private router: Router) { }
   ngOnInit(): void {
     this.initMap();
     this.cargarRutas(); // Cargar rutas iniciales
@@ -42,7 +44,6 @@ export class MapaComponent implements OnInit, OnDestroy {
     this.map = L.map('map').setView([21.88, -102.30], 13);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap contributors'
     }).addTo(this.map);
   }
 
@@ -59,7 +60,8 @@ export class MapaComponent implements OnInit, OnDestroy {
     const opciones = {
       style: {
         color: 'blue',
-        weight: 4
+        weight: 5,
+        lineCap: 'round'
       }
     };
 
@@ -177,5 +179,16 @@ export class MapaComponent implements OnInit, OnDestroy {
     this.updateRouteCoordinates(); // Actualiza las coordenadas de la nueva ruta
     this.marker.setLatLng(this.routeCoordinates[0]); // Restablecer la posición del marcador
     this.progress = 0; // Reiniciar el progreso
+  }
+
+  // Método para abrir/cerrar el menú
+  toggleMenu(): void {
+    this.menuOpen = !this.menuOpen;
+  }
+
+  // Método para redirigir al componente correspondiente
+  navigateTo(route: string): void {
+    this.router.navigate([route]);
+    this.toggleMenu();  // Cierra el menú al hacer clic
   }
 }

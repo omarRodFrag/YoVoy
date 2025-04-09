@@ -1,26 +1,44 @@
-<div class="header">
-    <h1>Transporte en Tiempo Real</h1>
+<div class="mapa-background">
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-left">
+      <button class="menu-btn" (click)="toggleMenu()">&#9776;</button>
+      <span class="logo">🚌</span>
+      <h1>Transporte en Tiempo Real</h1>
+    </div>
   </div>
-  
-  <div class="ruta-buttons">
-    <button (click)="cambiarRuta('ruta20')" class="route-btn">Ruta 20</button>
-    <button (click)="cambiarRuta('ruta40')" class="route-btn">Ruta 40</button>
-    <button (click)="cambiarRuta('ruta50')" class="route-btn">Ruta 50</button>
-  </div>
-  
-  <div class="container">
-    <!-- Mapa -->
-    <div id="map" class="map-container"></div>
-  
-    <!-- Barra lateral con rutas disponibles -->
-    <div class="sidebar">
-      <h2>Rutas Disponibles</h2>
-      <div class="route-list">
-        <div *ngFor="let ruta of rutas" class="route-item">
-          <h3>{{ ruta.nombre }}</h3>
-          <p>{{ ruta.descripcion }}</p>
+
+  <!-- CONTENEDOR CENTRAL -->
+  <div class="main-container">
+    <!-- BOTONES DE RUTA -->
+    <div class="ruta-buttons">
+      <button (click)="cambiarRuta('ruta20')" class="route-btn">Ruta 20</button>
+      <button (click)="cambiarRuta('ruta40')" class="route-btn">Ruta 40</button>
+      <button (click)="cambiarRuta('ruta50')" class="route-btn">Ruta 50</button>
+    </div>
+
+    <!-- CONTENIDO PRINCIPAL: MAPA + SIDEBAR -->
+    <div class="container">
+      <div id="map" class="map-container"></div>
+
+      <div class="sidebar">
+        <h2>Rutas Disponibles</h2>
+        <div class="route-list">
+          <div *ngFor="let ruta of rutas" class="route-item">
+            <h3>{{ ruta.nombre }}</h3>
+            <p>{{ ruta.descripcion }}</p>
+          </div>
         </div>
       </div>
     </div>
   </div>
-  
+
+  <!-- MENÚ LATERAL -->
+  <div class="side-menu" [ngClass]="{ active: menuOpen }">
+    <button (click)="toggleMenu()">X</button>
+    <ul>
+      <li (click)="navigateTo('unidades')">Unidades</li>
+      <li (click)="navigateTo('personal')">Personal</li>
+    </ul>
+  </div>
+</div>

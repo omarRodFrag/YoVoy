@@ -1,6 +1,6 @@
 // api.service.ts
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -35,6 +35,23 @@ export class ServiceService {
   // Crear una nueva unidad
   createUnidad(data: any): Observable<any> {
     return this.http.post(`${this.baseUrl}/unidades`, data);
+  }
+
+
+  // Crear un nuevo usuario
+  registrarUsuario(data: any): Observable<any> {
+    console.log(data)
+    return this.http.post(`${this.baseUrl}/registro`, data);
+  }
+
+  // Login con JWT
+  login(data: any): Observable<any> {
+    return this.http.post(`${this.baseUrl}/login`, data);
+  }
+
+  // Verificar el código de verificación
+  verifyCode(body: { email: string, code: string }, headers: HttpHeaders): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/verify`, body, { headers });
   }
 
 }
