@@ -3,6 +3,10 @@ from flask_cors import CORS
 import Backend.Functions as callMethod
 import Backend.GlobalInfo.Helpers as HelperFunctions
 from flask_mail import Mail, Message
+import jwt
+import datetime
+from functools import wraps
+from Backend.GlobalInfo.keys import JWT_SECRET_KEY  # Tu clave secreta
 
 
 app = Flask(__name__)
@@ -150,30 +154,39 @@ def create_ruta():
 # ==========================
 #  LOGIN
 # ==========================
-@app.route('/login', methods=['POST'])
-def login():
-    try:
-        data = request.json
-        email = data.get('email')
-        password = data.get('password')
+# Función para verificar el token JWT
+def token_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        token = None
 
-        if not email or not password:
-            return jsonify({'error': 'Email y contraseña son requeridos'}), 400
+        # Verificar si el token está presente en los headers de la solicitud
+        if 'Authorization' in request.headers:
+            token = request.headers['Authorization'].split(" ")[1]  # El token se pasa en el header
 
-        user = callMethod.login_user(email, password)
-        if user:
-            return jsonify({"message": "Login exitoso", "user": user}), 200
-        return jsonify({'error': 'Credenciales inválidas'}), 401
-    except Exception as e:
-        HelperFunctions.PrintException()
-        print(str(e))
-        return jsonify({'error': 'Error interno del servidor'}), 500
+        if not token:
+            return jsonify({'message': 'Token es requerido'}), 403  # Si no hay token, retorna un error 403
 
+        try:
+            # Decodificar el token usando la clave secreta
+            decoded_token = jwt.decode(token, JWT_SECRET_KEY, algorithms=['HS256'])
+            current_user_id = decoded_token['idUsuario']
+        except jwt.ExpiredSignatureError:
+            return jsonify({'message': 'Token ha expirado'}), 401
+        except jwt.InvalidTokenError:
+            return jsonify({'message': 'Token inválido'}), 401
+
+        return f(current_user_id, *args, **kwargs)
+
+    return decorated_function
+
+
+# Ruta para verificar el código
 @app.route('/verify', methods=['POST'])
-def verify_code():
+@token_required  # Aplicamos la verificación del token
+def verify_code(current_user_id):
     try:
         data = request.get_json()
-        print(data)
         email = data.get('email')
         entered_code = data.get('code')
 
@@ -185,6 +198,31 @@ def verify_code():
     except Exception as e:
         print(str(e))
         return jsonify({'message': 'Error al verificar el código'}), 500
+
+
+# Ruta para login
+@app.route('/login', methods=['POST'])
+def login():
+    try:
+        data = request.json
+        email = data.get('email')
+        password = data.get('password')
+
+        if not email or not password:
+            return jsonify({'error': 'Email y contraseña son requeridos'}), 400
+
+        # Verificar las credenciales del usuario
+        user = callMethod.login_user(email, password)
+        if user:
+            # Generar JWT token
+            token = callMethod.generate_jwt(user)
+            return jsonify({"message": "Login exitoso", "user": user, "token": token}), 200
+
+        return jsonify({'error': 'Credenciales inválidas'}), 401
+    except Exception as e:
+        HelperFunctions.PrintException()
+        print(str(e))
+        return jsonify({'error': 'Error interno del servidor'}), 500
 
 
 

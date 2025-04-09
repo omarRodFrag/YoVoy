@@ -1,6 +1,6 @@
 // api.service.ts
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -44,14 +44,14 @@ export class ServiceService {
     return this.http.post(`${this.baseUrl}/registro`, data);
   }
 
-  // Verificar si el usuario existe
+  // Login con JWT
   login(data: any): Observable<any> {
     return this.http.post(`${this.baseUrl}/login`, data);
   }
 
-  // Método para verificar el código de verificación (petición POST)
-  verifyCode(body: { email: string, code: string }): Observable<any> {
-    return this.http.post<any>(`${this.baseUrl}/verify`, body);
+  // Verificar el código de verificación
+  verifyCode(body: { email: string, code: string }, headers: HttpHeaders): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/verify`, body, { headers });
   }
 
 }

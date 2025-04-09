@@ -1,7 +1,9 @@
-from Backend.GlobalInfo.keys import get_db_connection
 import bcrypt
-from flask_mail import Message, Mail
 import random
+import jwt
+import datetime
+from flask_mail import Message, Mail
+from Backend.GlobalInfo.keys import get_db_connection, JWT_SECRET_KEY
 mail = Mail()
 
 # Obtener todos los usuarios
@@ -115,35 +117,6 @@ def add_parada(nombre, latitud, longitud):
     return parada_id
 
 
-# ==========================
-#  LOGIN
-# ==========================
-def login_user(email, password):
-    conn = get_db_connection()
-    cursor = conn.cursor(dictionary=True)
-    sql = "SELECT * FROM usuarios WHERE email = %s" 
-    cursor.execute(sql, (email,))
-    user = cursor.fetchone()
-
-    # Generar un código de verificación aleatorio
-    verification_code = random.randint(100000, 999999)
-
-    # Almacenar el código de verificación en la base de datos
-    cursor.execute("UPDATE usuarios SET verification_code = %s WHERE email = %s", (verification_code, email))
-    conn.commit()
-
-    # Enviar el código por correo
-    email_sent = send_verification_email(email, verification_code)
-
-    conn.close()
-
-    if user and bcrypt.checkpw(password.encode('utf-8'), user['password'].encode('utf-8')):
-        return user
-    return None
-
-
-
-
 
 # ==========================
 #  REGISTRO
@@ -171,6 +144,40 @@ def add_user(name, apellidos, email, password, role):
     return user_id
 
 
+# Función para generar un JWT token
+def generate_jwt(user):
+    expiration_time = datetime.datetime.utcnow() + datetime.timedelta(hours=1)  # Token expira en 1 hora
+    payload = {
+        'idUsuario': user['idUsuario'],
+        'exp': expiration_time  # Fecha de expiración del token
+    }
+    token = jwt.encode(payload, JWT_SECRET_KEY, algorithm='HS256')  # Firmamos el token con la clave secreta
+    return token
+
+
+def login_user(email, password):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    sql = "SELECT * FROM usuarios WHERE email = %s" 
+    cursor.execute(sql, (email,))
+    user = cursor.fetchone()
+
+    # Generar un código de verificación aleatorio
+    verification_code = random.randint(100000, 999999)
+
+    # Almacenar el código de verificación en la base de datos
+    cursor.execute("UPDATE usuarios SET verification_code = %s WHERE email = %s", (verification_code, email))
+    conn.commit()
+
+    # Enviar el código por correo
+    email_sent = send_verification_email(email, verification_code)
+
+    conn.close()
+
+    if user and bcrypt.checkpw(password.encode('utf-8'), user['password'].encode('utf-8')):
+        return user
+    return None
+
 # Función para enviar el correo de verificación
 def send_verification_email(email, code):
     try:
@@ -189,7 +196,6 @@ def verificar_codigo(email, entered_code):
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
 
-        # Buscar el código de verificación en la base de datos MySQL
         cursor.execute("SELECT verification_code FROM usuarios WHERE email = %s", (email,))
         user = cursor.fetchone()
 
@@ -197,7 +203,7 @@ def verificar_codigo(email, entered_code):
 
         if user:
             stored_code = user.get('verification_code')
-            
+
             # Compara el código ingresado con el almacenado
             if str(entered_code) == str(stored_code):
                 return {'message': 'Código verificado correctamente'}, 200

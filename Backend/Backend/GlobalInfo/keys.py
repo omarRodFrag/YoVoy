@@ -1,6 +1,9 @@
 import os
 import mysql.connector
 
+# Tu clave secreta generada
+JWT_SECRET_KEY = "1a2b3c4d5e6f7g8h9i0j1k2l3m4n5o6p" 
+
 # Configuración de la conexión a MySQL
 DB_CONFIG = {
     "host": "localhost",  # Cambia según tu configuración

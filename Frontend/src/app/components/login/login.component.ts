@@ -10,6 +10,7 @@ import { ServiceService } from '../../service.service';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { Login } from './interface/login.interface';
+import { HttpHeaders } from '@angular/common/http';
 
 @Component({
   selector: 'app-login',
@@ -39,7 +40,7 @@ export class LoginComponent {
     });
   }
 
-  // Método que maneja el registro de usuario
+  // Método que maneja el login de usuario
   login() {
     if (this.loginForm.invalid) {
       Swal.fire({
@@ -56,30 +57,23 @@ export class LoginComponent {
       password: this.loginForm.value.password,
     };
 
-    // Llama al método del servicio para registrar al usuario
+    // Llama al método del servicio para login
     this.service.login(login).subscribe(
       (response) => {
-        // Verifica si hay un mensaje de éxito
         if (response.message) {
+          localStorage.setItem('jwt_token', response.token);  // Guarda el token en el localStorage
           Swal.fire({
             icon: 'success',
             title: 'Enviando correo de verificación',
             showConfirmButton: false,
             timer: 2000,
           });
+          localStorage.setItem('auth_token', response.token);  // Guarda el token en el localStorage
           this.showVerificationForm = true;
-        } else if (response.error) {
-          Swal.fire({
-            icon: 'error',
-            title: response.error,
-            showConfirmButton: false,
-            timer: 2000,
-          });
         }
       },
       (error) => {
         console.error('Error al registrar usuario:', error);
-        // Mensaje genérico si no se obtiene respuesta del backend
         const mensaje =
           error.error?.error ||
           error.message ||
@@ -91,19 +85,23 @@ export class LoginComponent {
           showConfirmButton: false,
           timer: 2000,
         });
-        return;
       }
     );
   }
 
   // Método para verificar el código de verificación
-  verifyCode(verificationCode:string) {
+  verifyCode(verificationCode: string) {
     const body = { email: this.loginForm.value.email, code: verificationCode };
 
-    this.service.verifyCode(body).subscribe(
+    // Obtén el token del localStorage
+    const token = localStorage.getItem('jwt_token');
+
+    // Configura el encabezado con el token
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+
+    this.service.verifyCode(body, headers).subscribe(
       (response) => {
         if (response.message === 'Código verificado correctamente') {
-          // Código de verificación exitoso, redirigimos a la página principal
           Swal.fire({
             icon: 'success',
             title: 'Código verificado correctamente',
@@ -112,10 +110,9 @@ export class LoginComponent {
           });
           this.router.navigate(['/mapa']);
         } else {
-          // Código incorrecto, mostramos un mensaje de error
           alert('Código incorrecto');
         }
-      }, 
+      },
       (error) => {
         console.error('Error al verificar el código:', error);
         alert('Hubo un problema al verificar el código');
