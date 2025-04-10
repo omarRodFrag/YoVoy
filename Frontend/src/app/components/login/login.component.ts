@@ -61,7 +61,13 @@ export class LoginComponent {
     this.service.login(login).subscribe(
       (response) => {
         if (response.message) {
-          localStorage.setItem('jwt_token', response.token);  // Guarda el token en el localStorage
+          // Guardar información del usuario en localStorage
+          const rol = response.rol;
+          const token = response.token;
+          console.log(response.message)
+          console.log("rol: ",rol, " token: ",token)
+          localStorage.setItem('rol', rol);
+          localStorage.setItem('token', token);
           Swal.fire({
             icon: 'success',
             title: 'Enviando correo de verificación',

@@ -216,7 +216,8 @@ def login():
         if user:
             # Generar JWT token
             token = callMethod.generate_jwt(user)
-            return jsonify({"message": "Login exitoso", "user": user, "token": token}), 200
+            rol = user.get('rol')
+            return jsonify({"message": "Login exitoso", "user": user, "token": token, "rol": rol}), 200
 
         return jsonify({'error': 'Credenciales inválidas'}), 401
     except Exception as e:

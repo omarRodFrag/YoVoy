@@ -2,7 +2,7 @@
   <!-- HEADER -->
   <div class="header">
     <div class="header-left">
-      <button class="menu-btn" (click)="toggleMenu()">&#9776;</button>
+      <button *ngIf="isAdmin" class="menu-btn" (click)="toggleMenu()">&#9776;</button>
       <span class="logo">🚌</span>
       <h1>Transporte en Tiempo Real</h1>
     </div>

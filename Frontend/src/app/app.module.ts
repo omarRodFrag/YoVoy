@@ -17,8 +17,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     AppComponent,
     LoginComponent,
     RegistroComponent,
-    UnidadesComponent,
-    PersonalComponent,
     // No es necesario declarar MapaComponent aquí, ya que es standalone
   ],
   imports: [

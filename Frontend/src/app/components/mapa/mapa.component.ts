@@ -15,6 +15,7 @@ import { Router } from '@angular/router';
 export class MapaComponent implements OnInit, OnDestroy {
   rutas: any[] = [];
   menuOpen = false;  // Para abrir o cerrar el menú
+  isAdmin: boolean = false;  // Para verificar si el usuario es admin
 
   private map!: L.Map;
   private marker!: L.Marker;
@@ -31,12 +32,22 @@ export class MapaComponent implements OnInit, OnDestroy {
     this.initMap();
     this.cargarRutas(); // Cargar rutas iniciales
     this.startCursorAnimation(); // Comienza la animación al cargar el mapa
+    this.checkUserRole(); // Verifica el rol del usuario al cargar el componente
   }
 
   ngOnDestroy(): void {
     // Limpiar el intervalo cuando el componente se destruye
     if (this.interval) {
       clearInterval(this.interval);
+    }
+  }
+
+  private checkUserRole(): void {
+    const rol = localStorage.getItem('rol'); // Obtener el rol desde localStorage
+    if (rol === 'admin') {
+      this.isAdmin = true; // Si el rol es 'admin', mostramos el botón
+    } else {
+      this.isAdmin = false; // Si no, no mostramos el botón
     }
   }
 
