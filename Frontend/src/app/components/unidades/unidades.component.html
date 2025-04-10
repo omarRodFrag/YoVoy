@@ -1,40 +1,47 @@
-<div class="unidades-container">
-  <h1>Gestión de Unidades</h1>
-
-  <div class="filters">
-    <button [class.active]="filtroEstado === 'Todas'" (click)="cambiarFiltro('Todas')">
-      Todas ({{unidades.length}})
-    </button>
-    <button [class.active]="filtroEstado === 'Disponible'" (click)="cambiarFiltro('Disponible')">
-      Disponibles ({{totalDisponibles}})
-    </button>
-    <button [class.active]="filtroEstado === 'En Ruta'" (click)="cambiarFiltro('En Ruta')">
-      En Ruta
-    </button>
-    <button [class.active]="filtroEstado === 'Mantenimiento'" (click)="cambiarFiltro('Mantenimiento')">
-      Mantenimiento
-    </button>
+<div class="mapa-background">
+  <div class="unidades-container">
+    <!-- Botón de regreso -->
+  <div class="regresar-btn">
+    <button (click)="irAPrincipal()">← Regresar a la página principal</button>
   </div>
 
-  <div class="unidades-list">
-    <div class="unidad-header">
-      <span>Matrícula</span>
-      <span>Núm. Económico</span>
-      <span>Modelo</span>
-      <span>Capacidad</span>
-      <span>Estado</span>
-      <span>Última Revisión</span>
-      <span>Ruta Asignada</span>
+    <h1>Gestión de Unidades</h1>
+
+    <div class="filters">
+      <button [class.active]="filtroEstado === 'Todas'" (click)="cambiarFiltro('Todas')">
+        Todas ({{unidades.length}})
+      </button>
+      <button [class.active]="filtroEstado === 'Disponible'" (click)="cambiarFiltro('Disponible')">
+        Disponibles ({{totalDisponibles}})
+      </button>
+      <button [class.active]="filtroEstado === 'En Ruta'" (click)="cambiarFiltro('En Ruta')">
+        En Ruta
+      </button>
+      <button [class.active]="filtroEstado === 'Mantenimiento'" (click)="cambiarFiltro('Mantenimiento')">
+        Mantenimiento
+      </button>
     </div>
 
-    <div class="unidad-item" *ngFor="let unidad of unidadesFiltradas" [class]="'estado-' + unidad.estado.toLowerCase()">
-      <span class="matricula">{{unidad.matricula}}</span>
-      <span>{{unidad.numeroEconomico}}</span>
-      <span class="modelo">{{unidad.modelo}}</span>
-      <span>{{unidad.capacidad}} pasajeros</span>
-      <span class="estado">{{unidad.estado}}</span>
-      <span>{{unidad.ultimaRevision}}</span>
-      <span>{{unidad.rutaAsignada || 'N/A'}}</span>
+    <div class="unidades-list">
+      <div class="unidad-header">
+        <span>Matrícula</span>
+        <span>Núm. Económico</span>
+        <span>Modelo</span>
+        <span>Capacidad</span>
+        <span>Estado</span>
+        <span>Última Revisión</span>
+        <span>Ruta Asignada</span>
+      </div>
+
+      <div class="unidad-item" *ngFor="let unidad of unidadesFiltradas" [class]="'estado-' + unidad.estado.toLowerCase()">
+        <span class="matricula">{{unidad.matricula}}</span>
+        <span>{{unidad.numeroEconomico}}</span>
+        <span class="modelo">{{unidad.modelo}}</span>
+        <span>{{unidad.capacidad}} pasajeros</span>
+        <span class="estado">{{unidad.estado}}</span>
+        <span>{{unidad.ultimaRevision}}</span>
+        <span>{{unidad.rutaAsignada || 'N/A'}}</span>
+      </div>
     </div>
   </div>
 </div>
