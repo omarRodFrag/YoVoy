@@ -100,7 +100,8 @@ export class LoginComponent {
     const body = { email: this.loginForm.value.email, code: verificationCode };
 
     // Obtén el token del localStorage
-    const token = localStorage.getItem('jwt_token');
+    const token = localStorage.getItem('auth_token');
+
 
     // Configura el encabezado con el token
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
