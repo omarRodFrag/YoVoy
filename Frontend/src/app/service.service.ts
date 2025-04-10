@@ -17,27 +17,6 @@ export class ServiceService {
     return this.http.get(`${this.baseUrl}/rutas`);
   }
 
-  // Obtener una ruta por ID
-  getRuta(id: number): Observable<any> {
-    return this.http.get(`${this.baseUrl}/rutas/${id}`);
-  }
-
-  // Crear una nueva ruta
-  createRuta(data: any): Observable<any> {
-    return this.http.post(`${this.baseUrl}/rutas`, data);
-  }
-
-  // Obtener todas las unidades
-  getUnidades(): Observable<any> {
-    return this.http.get(`${this.baseUrl}/unidades`);
-  }
-
-  // Crear una nueva unidad
-  createUnidad(data: any): Observable<any> {
-    return this.http.post(`${this.baseUrl}/unidades`, data);
-  }
-
-
   // Crear un nuevo usuario
   registrarUsuario(data: any): Observable<any> {
     console.log(data)

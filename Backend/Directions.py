@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 import Backend.Functions as callMethod
 import Backend.GlobalInfo.Helpers as HelperFunctions
@@ -7,11 +7,22 @@ import jwt
 import datetime
 from functools import wraps
 from Backend.GlobalInfo.keys import JWT_SECRET_KEY  # Tu clave secreta
+import os
 
 
-app = Flask(__name__)
+# Crea la aplicación Flask
+app = Flask(__name__, static_folder=os.path.join(os.getcwd(), 'static'))
 CORS(app)
 
+# Ruta para servir el frontend (Angular)
+@app.route('/')
+def index():
+    return send_from_directory(app.static_folder, 'index.html')
+
+# Ruta para servir otros archivos estáticos (CSS, JS, etc.)
+@app.route('/<path:filename>')
+def serve_static(filename):
+    return send_from_directory(app.static_folder, filename)
 
 # Configuración de Flask-Mail
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
@@ -23,108 +34,6 @@ app.config['MAIL_DEFAULT_SENDER'] = 'omar.rod.fraf@gmail.com'
 mail = Mail(app)
 
 
-# Ruta para obtener todos los usuarios
-@app.route('/users', methods=['GET'])
-def get_users():
-    try:
-        users = callMethod.get_all_users()
-        return jsonify(users), 200
-    except Exception as e:
-        HelperFunctions.PrintException()
-        print(str(e))
-        return jsonify({'error': 'Error interno del servidor.'}), 500  # Mensaje de error más claro
-
-# Ruta para obtener un usuario por ID
-@app.route('/users/<int:user_id>', methods=['GET'])
-def get_user(user_id):
-    try:
-        user = callMethod.get_user_by_id(user_id)
-        if user:
-            return jsonify(user), 200
-        return jsonify({"error": "User not found"}), 404
-    except Exception as e:
-        HelperFunctions.PrintException()
-        print(str(e))
-        return jsonify({'error': 'Error interno del servidor.'}), 500  # Mensaje de error más claro
-
-# Ruta para crear un usuario
-@app.route('/users', methods=['POST'])
-def create_user():
-    try:
-        data = request.json
-        nombre = data.get('nombre')
-        email = data.get('email')
-        contraseña = data.get('contraseña')
-        rol = data.get('rol')
-        user_id = callMethod.add_user(nombre, email, contraseña, rol)
-        return jsonify({"message": "User created", "id": user_id}), 201
-    except Exception as e:
-        HelperFunctions.PrintException()
-        print(str(e))
-        return jsonify({'error': 'Error interno del servidor.'}), 500  # Mensaje de error más claro
-
-# Ruta para actualizar un usuario
-@app.route('/users/<int:user_id>', methods=['PUT'])
-def update_user(user_id):
-    try:
-        data = request.json
-        nombre = data.get('nombre')
-        email = data.get('email')
-        rol = data.get('rol')
-        affected_rows = callMethod.update_user(user_id, nombre, email, rol)
-        if affected_rows > 0:
-            return jsonify({"message": "User updated"}), 200
-        return jsonify({"error": "User not found"}), 404
-    except Exception as e:
-        HelperFunctions.PrintException()
-        print(str(e))
-        return jsonify({'error': 'Error interno del servidor.'}), 500  # Mensaje de error más claro
-
-# Ruta para eliminar un usuario
-@app.route('/users/<int:user_id>', methods=['DELETE'])
-def delete_user(user_id):
-    try:
-        affected_rows = callMethod.delete_user(user_id)
-        if affected_rows > 0:
-            return jsonify({"message": "User deleted"}), 200
-        return jsonify({"error": "User not found"}), 404
-    except Exception as e:
-        HelperFunctions.PrintException()
-        print(str(e))
-        return jsonify({'error': 'Error interno del servidor.'}), 500  # Mensaje de error más claro
-
-
-
-
-
-
-
-@app.route('/unidades', methods=['GET'])
-def get_unidades():
-    try:
-        unidades = callMethod.get_all_unidades()
-        return jsonify(unidades), 200
-    except Exception as e:
-        HelperFunctions.PrintException()
-        return jsonify({'error': 'Error interno del servidor.'}), 500
-
-@app.route('/unidades', methods=['POST'])
-def create_unidad():
-    try:
-        data = request.json
-        nombre = data.get('nombre')
-        numero_economico = data.get('numero_economico')
-        latitud = data.get('latitud')
-        longitud = data.get('longitud')
-        ruta_id = data.get('ruta_id')
-        unidad_id = callMethod.add_unidad(
-            nombre, numero_economico, latitud, longitud, ruta_id
-        )
-        return jsonify({"message": "Unidad creada", "id": unidad_id}), 201
-    except Exception as e:
-        HelperFunctions.PrintException()
-        return jsonify({'error': 'Error interno del servidor.'}), 500
-
 # ==========================
 #  RUTAS
 # ==========================
@@ -134,18 +43,6 @@ def get_rutas():
     try:
         rutas = callMethod.get_all_rutas()
         return jsonify(rutas), 200
-    except Exception as e:
-        HelperFunctions.PrintException()
-        return jsonify({'error': 'Error interno del servidor.'}), 500
-
-@app.route('/rutas', methods=['POST'])
-def create_ruta():
-    try:
-        data = request.json
-        nombre = data.get('nombre')
-        descripcion = data.get('descripcion')
-        ruta_id = callMethod.add_ruta(nombre, descripcion)
-        return jsonify({"message": "Ruta creada", "id": ruta_id}), 201
     except Exception as e:
         HelperFunctions.PrintException()
         return jsonify({'error': 'Error interno del servidor.'}), 500
