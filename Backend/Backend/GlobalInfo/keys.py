@@ -16,3 +16,4 @@ DB_CONFIG = {
 def get_db_connection():
     return mysql.connector.connect(**DB_CONFIG)
 #Creado Por Omar Rodriguez Fragroso, Pablo Daniel Macias Espino, Bryan Armando Caudel Hernandez, Rodrigo Villalpando Jimenez, Luis Pablo Samano Aguilar
+#Matriculas: 220193, 220868, 220763, 220400, 240100
