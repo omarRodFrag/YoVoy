@@ -15,3 +15,4 @@ DB_CONFIG = {
 # Función para obtener conexión a la base de datos
 def get_db_connection():
     return mysql.connector.connect(**DB_CONFIG)
+#Creado Por Omar Rodriguez Fragroso, Pablo Daniel Macias Espino, Bryan Armando Caudel Hernandez, Rodrigo Villalpando Jimenez, Luis Pablo Samano Aguilar
